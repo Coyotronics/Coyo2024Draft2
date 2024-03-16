@@ -14,16 +14,18 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ShooterTest1;
+import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Shoot;
+//import frc.robot.subsystems.ShooterTest1;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import java.util.List;
 //import com.pathplanner.lib.auto.NamedCommands;
 
@@ -37,7 +39,9 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final ShooterTest1 m_shooter = new ShooterTest1();
+  private final Shoot m_shoot = new Shoot();
+  private final Pivot m_pivot = new Pivot();
+  //private final Speaker m_speaker = new Speaker();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -65,7 +69,7 @@ public class RobotContainer {
 
             m_robotDrive));
 
-    m_shooter.setDefaultCommand(
+  /* m_shooter.setDefaultCommand(
         new RunCommand(
             ()->m_shooter.shoot(
                 m_driverController.getBButtonPressed(),
@@ -73,11 +77,37 @@ public class RobotContainer {
                 m_driverController.getXButtonPressed(),
                 m_driverController.getYButtonPressed(),
                 m_driverController.getRightBumper(),
-                m_driverController.getLeftBumper()),
-                //m_driverController.getPOV() == 0), 
+                m_driverController.getLeftBumper()), 
                 m_shooter));
+*/  
+
+    m_pivot.setDefaultCommand(
+        new RunCommand(
+            ()->m_pivot.pivot(
+                m_driverController.getXButtonPressed(),
+                m_driverController.getYButtonPressed(),
+                m_driverController.getXButtonReleased(),
+                m_driverController.getYButtonReleased(),
+                m_driverController.getRightBumper()),
+                m_pivot));
+
+     m_shoot.setDefaultCommand(
+        new RunCommand(
+            ()->m_shoot.shoot(
+                m_driverController.getAButtonPressed(),
+                 m_driverController.getAButtonReleased(),
+                m_driverController.getLeftBumperPressed(),
+                m_driverController.getLeftBumperReleased()),
+                m_shoot));
   }
 
+     /*m_speaker.setDefaultCommand(
+        new RunCommand(
+            ()->m_speaker.Speaker(
+               true),
+                m_speaker));
+  }
+     */
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by
@@ -88,31 +118,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // new JoystickButton(m_driverController, Button.kR1.value)
-    //     .toggleWhenActive(new RunCommand(
-    //         () -> m_robotDrive.setX(),
-    //         m_robotDrive));
-    
-    // if(m_driverController.getAButtonPressed())
-    // {
-    //     //We can set our trajectories here as well
-    // }
-    // if(m_driverController.getBButtonPressed())
-    // {
-    //     //We can set our trajectories here as well
-    // }
-    // if(m_driverController.getXButtonPressed())
-    // {
-    //     //We can set our trajectories here as well
-    // }
-    // if(m_driverController.getRightBumper())
-    // {
-    //     //We can set our trajectories here as well
-    // }
-    // if(m_driverController.getLeftBumper())
-    // {
-    //     //We can set our trajectories here as well
-    // }
+   
   }
 
   /**
