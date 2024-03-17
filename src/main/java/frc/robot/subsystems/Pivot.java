@@ -20,91 +20,91 @@ public class Pivot extends SubsystemBase
     //Declare our motors here first
     CANSparkMax pivotMotor1 = new CANSparkMax(35,MotorType.kBrushless);
     CANSparkMax pivotMotor2 = new CANSparkMax(36, MotorType.kBrushless);
-    
-private Encoder throughBore = new Encoder(1,2,3);
-
-/*
-//fixed angles 
-private static final double horizontalAngle = x;
-  private static final double angledSubwooferAngle = x;
-  private static final double shallowerAngle = x; 
-  private static final double verticalAngle = x;
-*/
-public void pivot(boolean xButtonPressed,boolean yButtonPressed, boolean getRightBumper, boolean getXButtonReleased, boolean getYButtonReleased )
-{
-    SmartDashboard.putNumber("Encoder Current Angle", throughBore.getDistance());
-    if(xButtonPressed)
-    {
-        double currentAngle =  throughBore.getDistance();
-        double expectedAngle = throughBore.getDistance()+15;
-        pivotUp(currentAngle, expectedAngle);
-    }
-
-    else if (getXButtonReleased)
-    {
-        stopPivot();
-    }
-    else if(yButtonPressed)
-    {
-        //Test Angles
-        //0 -15
-        //-15 -30
         
-        double currentAngle = throughBore.getDistance();
-        double expectedAngle = throughBore.getDistance()-15;
-        pivotDown(currentAngle, expectedAngle);
+    private Encoder throughBore = new Encoder(1,2,3);
+
+    /*
+    //fixed angles 
+    private static final double horizontalAngle = x;
+    private static final double angledSubwooferAngle = x;
+    private static final double shallowerAngle = x; 
+    private static final double verticalAngle = x;
+    */
+    public void pivot(boolean xButtonPressed, boolean yButtonPressed, boolean getXButtonReleased, boolean getYButtonReleased, boolean getRightBumper)
+    {
+        SmartDashboard.putNumber("Encoder Current Angle", throughBore.getDistance());
+        if(xButtonPressed)
+        {
+            double currentAngle =  throughBore.getDistance();
+            double expectedAngle = throughBore.getDistance()+15;
+            pivotUp(currentAngle, expectedAngle);
+        }
+
+        else if (getXButtonReleased)
+        {
+            stopPivot();
+        }
+        else if(yButtonPressed)
+        {
+            //Test Angles
+            //0 -15
+            //-15 -30
+            
+            double currentAngle = throughBore.getDistance();
+            double expectedAngle = throughBore.getDistance()-15;
+            pivotDown(currentAngle, expectedAngle);
+            
+        }
+        else if (getYButtonReleased)
+        {
+            stopPivot();
+        }
+        else if (getRightBumper)
+        {
+            stopPivot();
+        }
         
     }
-    else if (getYButtonReleased)
-    {
-        stopPivot();
-    }
-    else if (getRightBumper)
-    {
-        stopPivot();
-    }
-    
-}
 
-public void stopPivot()
-{
-    pivotMotor1.stopMotor();
-    pivotMotor2.stopMotor();
-}
+    public void stopPivot()
+    {
+        pivotMotor1.stopMotor();
+        pivotMotor2.stopMotor();
+    }
 
-public void pivotUp(double currentAngle,double expectedAngle)
-{
-    SmartDashboard.putNumber("Expected Voltage",(double)((expectedAngle-currentAngle)/15.0)*2);
-    if(currentAngle>=expectedAngle)
+    public void pivotUp(double currentAngle,double expectedAngle)
     {
-        return;
+        SmartDashboard.putNumber("Expected Voltage",(double)((expectedAngle-currentAngle)/15.0)*2);
+        if(currentAngle >= expectedAngle)
+        {
+            return;
+        }
+        else
+        {
+            pivotMotor2.follow(pivotMotor1,true);
+            //Test Angle 1:
+            //((-15-0)/15)*2 = -1*2 = -2
+            //((-30+15)/15)*2= -1*2 = -2
+            pivotMotor1.setVoltage((double)((expectedAngle-currentAngle)/15.0)*2); //change the number multiplied based on requirement
+            pivotUp(throughBore.getDistance(),expectedAngle);
+        }
     }
-    else
-    {
-        pivotMotor2.follow(pivotMotor1,true);
-        //Test Angle 1:
-        //((-15-0)/15)*2 = -1*2 = -2
-        //((-30+15)/15)*2= -1*2 = -2
-        pivotMotor1.setVoltage((double)((expectedAngle-currentAngle)/15.0)*2); //change the number multiplied based on requirement
-        pivotUp(throughBore.getDistance(),expectedAngle);
-    }
-}
 
-public void pivotDown(double currentAngle,double expectedAngle)
-{
-    //Test Angle 1
-    //(-15-0/15*2)*-1
-    if(currentAngle<=expectedAngle)
+    public void pivotDown(double currentAngle,double expectedAngle)
     {
-        return;
+        //Test Angle 1
+        //(-15-0/15*2)*-1
+        if(currentAngle <= expectedAngle)
+        {
+            return;
+        }
+        else
+        {
+            pivotMotor2.follow(pivotMotor1,true);
+            pivotMotor1.setVoltage(((double)((currentAngle-expectedAngle)/15.0)*2)*-1);  //change the number multiplied based on requirement (both for this case)
+            pivotDown(throughBore.getDistance(),expectedAngle);
+        }
     }
-    else
-    {
-        pivotMotor2.follow(pivotMotor1,true);
-        pivotMotor1.setVoltage(((double)((currentAngle-expectedAngle)/15.0)*2)*-1);  //change the number multiplied based on requirement (both for this case)
-        pivotDown(throughBore.getDistance(),expectedAngle);
-    }
-}
 }
 
 /*
